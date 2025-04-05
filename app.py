@@ -1,36 +1,29 @@
 import streamlit as st
-import numpy as np
-import pandas as pd
+from genai import get_response
 
-st.title('Coba Streamlit')
-st.write("Data suhu pada hari ini:")
-st.write(pd.DataFrame({
-    'Waktu (jam)': [6, 7, 8, 9],
-    'Suhu (°C)': [23, 25, 26, 33]
-}))
+import streamlit as st
 
-chart_data = pd.DataFrame(
-     np.random.randn(20, 1),
-     columns=['Suhu (°C)'])
+st.title("Echo Bot")
 
-st.line_chart(chart_data)
-    
-map_data = pd.DataFrame(
-    np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
-    columns=['lat', 'lon'])
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-st.map(map_data)
+# Display chat messages from history on app rerun
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-x = st.slider('x')  # 👈 this is a widget
-st.write(x, 'squared is', x * x)
+# React to user input
+if prompt := st.chat_input("What is up?"):
+    # Display user message in chat message container
+    st.chat_message("user").markdown(prompt)
+    # Add user message to chat history
+    st.session_state.messages.append({"role": "user", "content": prompt})
 
-add_selectbox = st.sidebar.selectbox(
-    'How would you like to be contacted?',
-    ('Email', 'Home phone', 'Mobile phone')
-)
-
-# Add a slider to the sidebar:
-add_slider = st.sidebar.slider(
-    'Select a range of values',
-    0.0, 100.0, (25.0, 75.0)
-)
+    response = f"{get_response(prompt)}"
+    # Display assistant response in chat message container
+    with st.chat_message("assistant"):
+        st.markdown(response)
+    # Add assistant response to chat history
+    st.session_state.messages.append({"role": "assistant", "content": response})
