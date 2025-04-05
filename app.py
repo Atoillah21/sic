@@ -3,7 +3,7 @@ from genai import get_response
 
 import streamlit as st
 
-st.title("Echo Bot")
+st.title("AIhmad")
 
 # Initialize chat history
 if "messages" not in st.session_state:
